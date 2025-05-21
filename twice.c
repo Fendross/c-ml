@@ -31,15 +31,11 @@ float rand_float()
     return (float) rand() / (float) RAND_MAX;
 }
 
-
-int main(void) 
+// Loss Function / Cost Function.
+// Measure the cost of our model.
+// We want to minimize the result of cost().
+float cost(float w)
 {
-    //srand(time(0));
-    srand(69);
-
-    float w = rand_float() * 10000.0f;
-    printf("%f\n", w);
-
     // Cost function.
     float variance = 0.0f;
     for (size_t i = 0; i < train_count; i++) {
@@ -49,16 +45,30 @@ int main(void)
         // Applying the model.
         float y = x * w;
 
-        // Calculating variance (distance between values squared).
+        // Updating variance (distance between values squared).
         float d = y - train[i][1];
         variance += d * d;
 
         // Compare the two.
         printf("Actual: %f, Expected: %f\n", y, train[i][1]);
     }
-    variance /= train_count;
+    return variance /= train_count;
+}
 
-    printf("Variance: %f\n", variance);
+
+int main(void) 
+{
+    //srand(time(0));
+    srand(69);
+
+    float w = rand_float() * 10000.0f;
+    printf("%f\n", w);
+
+    float eps = 1e-3;
+
+    printf("Variance: %f\n", cost(w));
+    //printf("Variance: %f\n", cost(w + eps)); This made the model worse!
+    printf("Variance: %f\n", cost(w - eps)); // This made the model better!
 
     return 0;
 }
